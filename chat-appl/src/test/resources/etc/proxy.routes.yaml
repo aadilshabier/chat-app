@@ -1,0 +1,171 @@
+#++TKDINDA:changed
+# root of the proxy configuration
+proxy:
+  #Common prefix for all routes
+  prefix: /
+  servletPath: /
+  #Flag saying whether to strip the prefix from the path before forwarding.
+  stripPrefix: true
+  includeDebugHeader: false
+  sslHostValidationEnabled: false
+  selfSignCert: false
+  #Flag to determine whether the proxy adds X-Forwarded-* headers.
+  addProxyHeaders: true
+  ignoredPatterns: [/**/gateway/**]
+  defaultService: com.oracle.adw.odi.proxy.service.DefaultProxyService
+  #List of sensitive headers that are not passed to downstream requests, like Cookie,Set-Cookie, Authorization,
+  #But in our case we should allow Authorization header to be passed to downstream requests
+  sensitiveHeaders: []  
+  ignoredHeaders: []
+  ignoredServices: ["*"]
+  #++TKDINDA:15012021
+  authEndPoint: /broker/pdbcs/public/v1/token
+  #authEndPoint: /idms/oauth/token
+  #Well explained attributes to configure proxy connection pooling
+  host:
+    maxTotalConnections: 200
+    maxPerRouteConnections: 150
+    socketTimeoutMillis: 600000
+    connectTimeoutMillis: 600000
+    connectionRequestTimeoutMillis: 600000
+    keepAliveTimeMillis: 600000
+    closeIdleConnWaitTimeMillis: 30
+    disableCookie: false
+    retryable: false
+    retryInterval: 2
+  #  register appls for route configuration
+  routes:
+    # key of the roure 
+    broker:
+      #A full physical URL to map to the route for the static case and will get changed in case of dynamic flag true
+      url: https://192.168.0.104:8888/broker
+      stripPrefix: false
+      #service clas, whcih is extended to handle specific route
+      serviceClass: com.oracle.adw.odi.proxy.service.BrokerProxyService
+      #route will not be rewrite in case of false
+      dynamic: false   
+      commander: true
+      #metadata- proxy redirector needs some data from the request header using these attributes to redirect the right backend server
+      metadata:
+#          tenantKey: tenantId
+#          pdbcsKey: pdbcsId
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: Authorization
+          passAs: Header
+          validateAuth: false
+          tokenIdentity: false
+    odi-rest:
+      url: http://den01fyu.us.oracle.com:9190/odi-rest
+      stripPrefix: false
+      serviceClass: com.oracle.adw.odi.proxy.service.OdiRestProxyService   
+      metadata:
+#          tenantKey: tenantId
+#          pdbcsKey: pdbcsId
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: Authorization
+          validateAuth: true
+          passAs: Header       
+          tokenIdentity: true       
+    oracle-data-transforms:
+      url: http://domain:8432/oracle-data-transforms
+      stripPrefix: false
+      defaultRoute: true    
+      dynamic: false   
+      serviceClass: com.oracle.adw.odi.proxy.service.OdiStudioProxyService   
+      metadata:
+#          tenantKey: tenantId
+#          pdbcsKey: pdbcsId
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: Authorization
+          validateAuth: true
+          passAs: Cookie      
+          cookiePaths: [odi-rest]     
+          tokenIdentity: true
+          tenantHeader: tenant-name
+          pdbcsHeader: database-name         
+    idms:
+      url: https://localhost:8888/idms
+      stripPrefix: false
+      serviceClass: com.oracle.adw.odi.proxy.service.IDMProxyService
+      dynamic: false   
+      commander: false
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: Authorization
+          validateAuth: false
+          passAs: Header
+          tokenIdentity: true                     
+    custapp:
+      url: https://localhost:8181/custapp
+      stripPrefix: false
+      defaultRoute: false
+      dynamic: false   
+      serviceClass: com.oracle.adw.odi.proxy.service.CustPortalProxyService
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: Authorization
+          passAs: Header
+          validateAuth: false
+          cookiePaths: [app1,app2,app3]  
+          tokenIdentity: true
+    app1:
+      url: https://localhost:9744/app1
+      stripPrefix: false
+      serviceClass: com.oracle.adw.odi.proxy.service.App1ProxyService
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: access_token
+          passAs: Cookie
+          tokenIdentity: true
+    app2:
+      url: http://localhost:9745/app2
+      stripPrefix: false
+      serviceClass: com.oracle.adw.odi.proxy.service.App2ProxyService
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: access_token
+          passAs: Cookie
+          tokenIdentity: true
+    app3:
+      url: https://localhost:9746/app3
+      stripPrefix: false
+      serviceClass: com.oracle.adw.odi.proxy.service.App3ProxyService
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: access_token
+          passAs: Cookie
+          tokenIdentity: true
+    adwp:
+      url: https://localhost:4200/adwp
+      stripPrefix: false
+      dynamic: false
+      defaultRoute: false
+      serviceClass: com.oracle.adw.odi.proxy.service.UIProxyService   
+      metadata:
+          tenantKey: tenant_name
+          pdbcsKey: database_name
+          versionKey: X-API-Version
+          authType: Bearer
+          authKey: access_token
+          passAs: Cookie       
+          cookiePaths: [custapp]   
+          validateAuth: false
+          tokenIdentity: true    

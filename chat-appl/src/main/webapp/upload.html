@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="ISO-8859-1">
+<title>NITK Chat Room</title>
+<style type="text/css">
+#dlg{width:350px;height:200px;overflow: hidden;margin: 0 auto;background: #ecf0f1;border-radius: 6px;box-shadow: 3px 3px 10px #333;top: 80px;padding: 15px;}
+</style>
+<script type="text/javascript">
+function setMessage() {
+	window.opener.sendMessage(document.location.origin + '/chat' + ufile.value);
+}
+
+</script>
+</head>
+<body>
+	<!-- <div id='dlg'>
+	<center> -->
+	<h4>Select file: -</h4>
+	<br>
+		<span>
+			<form action='upload' method='post' enctype='multipart/form-data'>
+				<input type = 'file' id='ufile' name='ufile' />
+	    		<input type='submit'  onclick = 'setMessage()' value='upload' />
+	    	</form>
+	    </span>
+<!-- 	</center>
+	</div> -->
+</body>
+</html>

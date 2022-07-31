@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.nitk.chat</groupId>
+  <artifactId>chat-appl</artifactId>
+  <version>1.2.3</version> 
+  <packaging>war</packaging>
+  <name>NITK Chat Application</name>
+  <url>http://maven.apache.org</url>
+   <properties>
+   		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+   		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.version>3.6.1</maven.compiler.version>
+      	<java.version>1.8</java.version>
+      	<maven.compiler.source>1.8</maven.compiler.source>
+      	<maven.compiler.target>1.8</maven.compiler.target>
+      	<maven.compiler.version>3.8.0</maven.compiler.version>
+  		<junit.version>4.13</junit.version>
+		<jetty.version>9.4.46.v20220331</jetty.version>
+  </properties>	
+  	<dependencies>
+ 	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.1.0</version>
+	     <scope>provided</scope>
+	</dependency> 	
+<dependency>
+    <groupId>javax.json</groupId>
+    <artifactId>javax.json-api</artifactId>
+    <version>1.1.4</version>
+</dependency>  	
+<dependency>
+    <groupId>org.glassfish</groupId>
+    <artifactId>javax.json</artifactId>
+    <version>1.1.4</version>
+</dependency>
+<dependency>
+    <groupId>javax.websocket</groupId>
+    <artifactId>javax.websocket-api</artifactId>
+    <version>1.1</version>
+    <scope>provided</scope>
+</dependency>
+  <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.7</version>
+  </dependency>
+    <dependency>
+      	<groupId>junit</groupId>
+      	<artifactId>junit</artifactId>
+      	<version>${junit.version}</version>
+      	<scope>test</scope>
+    </dependency>			
+  </dependencies>
+  <build>
+      <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources> 
+    <plugins> 
+	   	<plugin>
+         	<groupId>org.apache.maven.plugins</groupId>
+         	<artifactId>maven-war-plugin</artifactId>
+         	<version>3.2.3</version>
+         	<configuration>
+                 <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
+   	           	
+	           	<failOnMissingWebXml>false</failOnMissingWebXml>
+	           	<archive>
+	           		<manifest>
+              			<addClasspath>true</addClasspath>
+            		</manifest>
+	             	<addMavenDescriptor>false</addMavenDescriptor>
+	           	</archive>
+ 	           	<webResources>
+		            <resource>
+ 							<directory>src/main/webapp</directory>
+		            </resource>
+		        </webResources>
+		        <warName>chat-appl</warName> 
+         	</configuration>
+        </plugin>   
+        <plugin>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>${jetty.version}</version>
+            <configuration>
+            	<scanIntervalSeconds>1</scanIntervalSeconds>
+            	<stopKey>chat</stopKey>
+            	<stopPort>8998</stopPort>
+				<webApp>
+					<contextPath>/chat</contextPath>
+				</webApp>
+				<httpConnector>
+          			<port>4444</port>
+        		</httpConnector>				
+			</configuration>
+        </plugin> 
+
+	</plugins>
+  </build>
+</project>

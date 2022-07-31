@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="ISO-8859-1">
+<title>NITK Chat Room</title>
+<style type="text/css">
+
+</style>
+	<script type="text/javascript">
+		var url = document.location.host + '/chat';
+		var websocket = new WebSocket('ws://' + url + '/room');
+		websocket.onmessage = function processMessage(message){
+			var jsonData = JSON.parse(message.data);
+			if(jsonData.message != null) msgTextArea.value += jsonData.message + '\n';
+			
+		}
+		function sendMessage(msg){
+			if(msg == null) msg = msgText.value
+			websocket.send(msg);
+			msgText.value = "";
+		}
+		function displayDialog() {
+			var cWin = window.open('upload.html' , "_blank", "toolbar=no,status=no,menubar=no,location=center,scrollbars=no,resizable=no,height=500,width=657");
+		}
+	</script>
+</head>
+<body>
+	<textarea id="msgTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+	<br />
+	<input type="text" id="msgText" size="50" />
+	<input type="button" value="upload" onclick="displayDialog();" >
+	<input type="button" value="Send" onclick="sendMessage();" />
+</body>
+</html>

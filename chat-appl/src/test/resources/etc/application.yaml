@@ -1,0 +1,47 @@
+#++TKDINDA:changed
+#indicates the envinment of the application(prod, dev, test)
+profile: dev
+#this is for mocking the envirnment using dy=ummy tenants
+mock: false   
+appVersion: ${release.version} 
+#the mvc path for the gateway(mainly  to achieve async call)
+#authPath: /_ogwuth-
+mvcPath: /gw
+resourcePath: /gassets
+#++TKDINDA:19082021
+notifyStatus: true
+#login configuration  
+#++TKDINDA:09092021:NEW
+loginConfig: 
+  pages: {
+    login: {key: -acc_idwo_, value: login.html},
+    retry: {key: retry_until-up_, value: retry.html}
+  }
+  #++TKDINDA:15012021
+  allowedPaths: [/gateway/logout, /gateway/status, /gateway/health, /gateway/retry]
+  signinUrls: [/broker/pdbcs/public/v1/token, /idms/oauth/token]
+  localLoginPage: true
+  #++TKDINDA:12/06/2021
+  urlSecretLiveMins:  6000
+defaultTenantKey: tenant_name
+defaultPdbcsKey: database_name
+#multipart config required to handle multipart request(mainly upload file)
+multipart:
+  maxFileSize: 100
+  maxRequestSize: 110
+  fileSizeThreshold: 50
+  enabled: true 
+  resolveLazily: false
+  uploadDirectory: /tmp/odi/upload 
+#Well explained attributes to configure async connection pooling  
+host:
+  maxTotalConnections: 200
+  maxPerRouteConnections: 150
+  socketTimeoutMillis: 600000
+  connectTimeoutMillis: 600000
+  connectionRequestTimeoutMillis: 600000
+  keepAliveTimeMillis: 600000
+  closeIdleConnWaitTimeMillis: 30
+  disableCookie: false
+  retryable: false
+  retryInterval: 2
